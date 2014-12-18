@@ -20,12 +20,20 @@ end
 
 setmetatable(Entity, { __call = function(_, ...) return Entity.new(...) end })
 
-
 function Entity:Update(time_delta)
   self.x_pos = self.x_pos + self.x_vel*time_delta
   self.y_pos = self.y_pos + self.y_vel*time_delta
   self.x_vel = self.x_vel + self.x_acc*time_delta
   self.y_vel = self.y_vel + self.y_acc*time_delta
 end
+
+function Entity:Draw()
+  local black = {0, 0, 0, 255}
+  love.graphics.setColor(black)
+  love.graphics.rectangle(
+      "fill", self.x_pos - self.size/2, self.y_pos - self.size/2,
+      self.size, self.size)
+end
+
 
 
