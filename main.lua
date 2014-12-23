@@ -1,26 +1,29 @@
 
 require('entity')
 
+-- Constants
+TILE_SIZE = 32
+CLR_BLK = {0, 0, 0, 255}
+CLR_WHT = {255, 255, 255, 255}
+CLR_SKY_BLU = {135, 206, 250, 255}
+CLR_DRT_BRN = {139, 69, 19, 255}
+CLR_GRS_GRN = {34, 139, 34, 255}
+CLR_PRL = {153, 0, 153, 255}
+
 function love.load()
   canvas = love.graphics.newCanvas()
 
   love.graphics.setCanvas(canvas)
-	width, height = canvas:getDimensions()
+	screen_width, screen_height = canvas:getDimensions()
 	-- canvas.clear()
-        hero = Entity(width/2, height/2, 0, 0, 0, 100, 40)
-	
-        sky_blue = {135, 206, 250, 255}
-	love.graphics.setBackgroundColor(sky_blue)
-	dirt_brown = {139, 69, 19, 255}
-	love.graphics.setColor(dirt_brown)
-	love.graphics.rectangle("fill", 0, height*.6, width, height*.4)
-	grass_green = {34, 139, 34, 255}
-	love.graphics.setColor(grass_green)
-	love.graphics.rectangle("fill", 0, height*.6, width, height*.05)
+        hero = Entity{x_pos=screen_width/2, y_pos=screen_height/2, y_acc=100, size=40}
+	love.graphics.setBackgroundColor(CLR_SKY_BLU)
+	love.graphics.setColor(CLR_DRT_BRN)
+	love.graphics.rectangle("fill", 0, screen_height*.6, screen_width, screen_height*.4)
+	love.graphics.setColor(CLR_GRS_GRN)
+	love.graphics.rectangle("fill", 0, screen_height*.6, screen_width, screen_height*.05)
 
-
-
-	love.graphics.print('Hello World!', width*.2, height*.3, 0, 4)
+	love.graphics.print('Hello World!', screen_width*.2, screen_height*.3, 0, 4)
   love.graphics.setCanvas()
 end
 
@@ -31,7 +34,7 @@ end
 
 function love.draw()
   love.graphics.setColor(255, 255, 255)
-  print(width)
+  print(screen_width)
   love.graphics.draw(canvas)
   hero.Draw(hero, canvas)
 
