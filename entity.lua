@@ -6,6 +6,8 @@ Entity.__index = Entity
 STD_SIZE = 26
 HERO_WIDTH = 64
 HERO_HEIGHT = 64
+X_DIR = 10
+Y_DIR = 20
 
 -- Entity will be a base class for things that are not static on screen
 -- TODO: Only let Entity.new take x_pos, y_pos and size 
@@ -22,9 +24,52 @@ end
 
 setmetatable(Entity, { __call = function(_, ...) return Entity.new(...) end })
 
+
+function Entity:DistNatural(dir, time_delta)
+  local pos 
+  if (dir == X_DIR) then
+    pos = self.x_pos
+    vel = self.x_vel
+  else
+    pos = self.y_pos
+    vel = self.y_vel
+  end
+
+  return pos + vel*time_delta
+end
+
+
+-- TODO
+function Entity:DistClosestStaticObj(dir, time_delta)
+
+  return 10000000
+
+end
+
+
+
+function Entity:UpdatePos(dir, time_delta)
+  -- Distance to closest static object
+  local dist_obj = self:DistClosestStaticObj(dir, time_delta)      
+
+  -- Natural distance to move if no objects in the way
+  local dist_nat = self:DistNatural(dir, time_delta)
+ 
+  pos_delta = math.min(dist_obj, dist_nat)
+  --TODO: register the change!!
+   
+ 
+
+end
+
+
 function Entity:Update(time_delta)
-  self.x_pos = self.x_pos + self.x_vel*time_delta
-  self.y_pos = self.y_pos + self.y_vel*time_delta
+  self:UpdatePos(X_DIR, time_delta)
+  self:UpdatePos(Y_DIR, time_delta)
+
+
+
+
   self.x_vel = self.x_vel + self.x_acc*time_delta
   self.y_vel = self.y_vel + self.y_acc*time_delta
 end
