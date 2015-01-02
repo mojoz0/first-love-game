@@ -32,6 +32,10 @@ function init_game_board()
   end 
 end
 
+-- Util function that coonverts raw coordinate to tile line number
+function CoordToTileLine(coord)
+  return math.floor(coord / TILE_SIZE)
+end
 
 function game_board_draw(canvas)
   dbgprint("num_total_tiles=", num_total_tiles)
