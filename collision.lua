@@ -11,8 +11,6 @@ require("game_board")
 -- Params: gameboard, hero
 function MinDistClosestObj(gameboard, dir, entity)
   -- Determine direction that entity is going in specified direction
---  if (dir == X_DIR)
-    --  
   -- we're gonna assume we're asking for Y direction
 
   -- TODO: Maybe unpack all these functions and make this a monster
@@ -52,12 +50,14 @@ function IntersectSolidTile(intersect_line, low, high, gameboard, tdir)
 
   -- Assume scan down
   -- TODO: implement scanning in all directions
-   
+  for i=low, high+1 do
+    local tile = gameboard:GetTileRC(intersect_line, i)
+    if (tile:IsSolid()) then
+      return true
+    end
+  end
 
-
-
-
-
+  return false
 end
 
 

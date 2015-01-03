@@ -6,6 +6,9 @@
 
 dbg = 0
 
+-- Turn on to show tile lines
+DBG_SHOW_TILE_LINES = false
+
 function dbgprint (...)
   if dbg then print(...) end
 end

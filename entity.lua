@@ -11,10 +11,10 @@ HERO_WIDTH = 64
 HERO_HEIGHT = 64
 X_DIR = 10
 Y_DIR = 20
-DIR_EAST = 1
-DIR_WEST = -1
-DIR_SOUTH = 2
-DIR_NORTH = -2
+DIR_RIGHT = 1
+DIR_LEFT = -1
+DIR_DOWN = 2
+DIR_LEFT = -2
 
 -- Entity will be a base class for things that are not static on screen
 -- TODO: Only let Entity.new take x_pos, y_pos and size 
@@ -108,7 +108,6 @@ function Entity:UpdatePos(time_delta)
   -- Final new position in each direction
   self.x_pos = self:GetNewPos(self.x_pos, self.x_vel, dist_obj_x, time_delta)
   self.y_pos = self:GetNewPos(self.y_pos, self.y_vel, dist_obj_y, time_delta)
-  -- dbgprint("new y_pos = ", self.y_pos)
 
 
 end
