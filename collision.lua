@@ -4,12 +4,13 @@
   @author Francisco Rojo (mojoz0101@gmail.com)
 --]]
 
-require("entity")
 require("game_board")
+require("dbg")
 
+--[[
 -- TODO: Function to scan for objects in path of entity
 -- Params: gameboard, hero
-function MinDistClosestObj(gameboard, dir, entity)
+function DistClosestStaticObj(gameboard, dir, entity)
   -- Determine direction that entity is going in specified direction
   -- we're gonna assume we're asking for Y direction
 
@@ -30,14 +31,16 @@ function MinDistClosestObj(gameboard, dir, entity)
   return math.abs(forward_facing_edge - coord_closest_obj)
 
 end
+]]
+
 
 -- Scanning function
 -- Returns column/row of closest obstacle in that path
 function ClosestObjectOnPaths(travel_dir, edge_line,
                               low_bound, high_bound, gameboard)
-  local line
-  while (!IntersectSolidTiles(edge_line, low_bound, high_bound,
-                              gameboard, travel_dir)) do
+  local line = edge_line
+  while (not IntersectSolidTile(line, low_bound, high_bound,
+                                gameboard, travel_dir)) do
     line = NextTileLine(line, travel_dir)
   end
    
@@ -51,6 +54,7 @@ function IntersectSolidTile(intersect_line, low, high, gameboard, tdir)
   -- Assume scan down
   -- TODO: implement scanning in all directions
   for i=low, high+1 do
+    --dbgprint("IST: low, high =", low, high)
     local tile = gameboard:GetTileRC(intersect_line, i)
     if (tile:IsSolid()) then
       return true
@@ -60,4 +64,9 @@ function IntersectSolidTile(intersect_line, low, high, gameboard, tdir)
   return false
 end
 
+function NextTileLine(line, tdir)
+  -- Assume scan down
+  -- TODO: implement scanning in all directions
+  return line + 1
+end 
 

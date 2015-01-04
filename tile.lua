@@ -22,7 +22,7 @@ end
 setmetatable(Tile, { __call = function(_, ...) return Tile.new(...) end })
 
 function Tile:IsSolid()
-  return self.tile_type = TILE_SOLID 
+  return (self.tile_type == TILE_SOLID)
 end
 
 
@@ -30,7 +30,7 @@ end
 function Tile:Draw(x_pos, y_pos)    
   love.graphics.setColor(self.color) 
   love.graphics.rectangle("fill", x_pos, y_pos, TILE_SIZE, TILE_SIZE)
-  dbgprint("DBG_SHOW_TILE_LINES=", DBG_SHOW_TILE_LINES)
+  --dbgprint("DBG_SHOW_TILE_LINES=", DBG_SHOW_TILE_LINES)
   if (DBG_SHOW_TILE_LINES) then
     dbgprint("in the if statetment...= ", DBG_SHOW_TILE_LINES)
     self:DrawDebugLines(x_pos, y_pos)

@@ -1,6 +1,6 @@
 
 require('game_board')
-
+require('collision')
 
 Entity = {}
 Entity.__index = Entity
@@ -36,12 +36,34 @@ function Entity:DistNatural(pos, vel, time_delta)
   return vel*time_delta
 end
 
--- TODO: this
-function Entity:DistClosestStaticObj(pos, vel, time_delta)
+-- TODO: Function to scan for objects in path of entity
+-- Params: gameboard, hero
+function Entity:DistClosestStaticObj(gameboard, dir, entity)
+  -- Determine direction that entity is going in specified direction
+  -- we're gonna assume we're asking for Y direction
 
-  return 10000000
+  -- TODO: Maybe unpack all these functions and make this a monster
+  -- function for performance reasons (only have to check dir once)
+
+  -- Coordinate of forward facing edge
+  local forward_facing_edge, travel_dir = entity:ForwardFacingEdge(dir)
+  local edge_line = CoordToTileLine(forward_facing_edge)
+
+  -- Tile paths that entity intersects with
+  local low_bound, high_bound = entity:IntersectedTilePaths(dir)
+
+  local coord_closest_obj = ClosestObjectOnPaths(
+                                dir, edge_line,
+                                low_bound, high_bound, gameboard)
+  local pos_closest_obj =  coord_closest_obj*TILE_SIZE
+
+
+  return math.abs(forward_facing_edge - pos_closest_obj)
 
 end
+
+
+
 
 function Entity:ForwardFacingEdge(dir)
   if (dir == X_DIR) then
@@ -88,7 +110,26 @@ end
 
 function Entity:UpdatePos(time_delta)
   -- Distance to closest static object
-  local dist_obj_x = self:DistClosestStaticObj(
+  local dist_obj_x = self:DistClosestStaticObj(game_board, X_DIR, self)
+  local dist_obj_y = self:DistClosestStaticObj(game_board, Y_DIR, self)
+  dbgprint("dist_obj_x=", dist_obj_x)
+  dbgprint("dist_obj_y=", dist_obj_y)
+
+
+
+  -- TESTING BEGIN
+  local test_forward_facing_y, tdir_y = self:ForwardFacingEdge(Y_DIR)
+  local edge_line = CoordToTileLine(test_forward_facing_y)
+  local low_boundy, high_boundy = self:IntersectedTilePaths(X_DIR)
+  local tile_intersect = IntersectSolidTile(edge_line,
+                                            low_boundy, high_boundy,
+                                            game_board, tdir_y)
+  dbgprint("tile_intersect=", tile_intersect)
+  -- TESTING END
+  
+
+--[[
+self:DistClosestStaticObj(
                          self.x_pos, self.x_vel, X_DIR, time_delta)
   local dist_obj_y = self:DistClosestStaticObj(
                          self.y_pos, self.y_vel, Y_DIR, time_delta)
@@ -102,7 +143,7 @@ function Entity:UpdatePos(time_delta)
   local low_boundy, high_boundy = self:IntersectedTilePaths(X_DIR)
   dbgprint("low_boundx, high_boundx=", low_boundx, high_boundx)
   dbgprint("low_boundy, high_boundy=", low_boundy, high_boundy)
-
+]]
  
 
   -- Final new position in each direction

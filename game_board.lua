@@ -9,8 +9,8 @@ Gameboard = {}
 Gameboard.__index = Gameboard
 
 function Gameboard.new(args)
-  assert (num_tiles_wide > 0)
-  assert (num_tiles_high > 0)
+  assert (args.num_tiles_wide > 0)
+  assert (args.num_tiles_high > 0)
 
   local num_tiles_wide = args.num_tiles_wide or DFLT_GB_LEN
   local num_tiles_high = args.num_tiles_high or DFLT_GB_LEN
@@ -34,24 +34,12 @@ end
 setmetatable(Gameboard, { __call = function(_, ...) return Gameboard.new(...) end })
 
 
---TODO: Convert game_board into a class (or table with metatable)
--- Give it functions such as:
--- GetTileRC(row, col) which returns tile at specified row and column
--- and have attributes like num_tiles_wide, num_tiles_high etc.
--- This will be a lot cleaner. Shouldn't take too long to implement.
-
 function init_game_board()
   local num_tiles_wide = math.floor(screen_width / TILE_SIZE)
   local num_tiles_high = math.floor(screen_height / TILE_SIZE)
 
   local game_board = Gameboard{num_tiles_wide=num_tiles_wide,
                                num_tiles_high=num_tiles_high}
-
-  -- Initialize array of blank tiles
-  for i=1, game_board.num_total_tiles+1 do
-    dbgprint("init i=", i)
-    game_board.tile_arr[i] = Tile({}) 
-  end
 
   -- FIXME: This is just for testing/development now
 
@@ -61,7 +49,7 @@ function init_game_board()
 
   dbgprint("num_tiles_wide=", num_tiles_wide)
   dbgprint("pltfm_tile_start=", pltfm_tile_start)
-  dbgprint("num_total_tiles=", num_total_tiles)
+  dbgprint("num_total_tiles=", game_board.num_total_tiles)
 
   -- Make the bottom lines solid black
   for i=pltfm_tile_start, game_board.num_total_tiles+1 do
@@ -91,8 +79,9 @@ function Gameboard:Draw(canvas)
 end
 
 function Gameboard:GetTileRC(row, col)
-  local idx = row*self.num_tile_wide + col
-  assert(idx < num_total_tiles)
+  local idx = row*self.num_tiles_wide + col
+  --dbgprint("GTRC: idx, row, col =", idx, row, col)
+  assert(idx < self.num_total_tiles)
   return self.tile_arr[idx]
 end
 
