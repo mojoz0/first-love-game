@@ -10,9 +10,9 @@ require('entity')
 require('game_board')
 
 -- Constants
-TILE_SIZE = 32
 CLR_BLK = {0, 0, 0, 255}
 CLR_WHT = {255, 255, 255, 255}
+CLR_YLW = {255, 255, 0, 255}
 CLR_GRN = {0, 255, 0, 255} 
 CLR_RED = {255, 0, 0, 255}
 CLR_SKY_BLU = {135, 206, 250, 255}
@@ -29,7 +29,8 @@ function love.load()
 
   love.graphics.setCanvas(canvas)
 	-- canvas.clear()
-        hero = Entity({x_pos=screen_width/2, y_pos=screen_height/2, y_acc=100, size=40})
+        hero = Entity({x_pos=screen_width/2, y_pos=screen_height/2, 
+                       y_acc=100, x_vel=-100, size=40})
 	love.graphics.setBackgroundColor(CLR_SKY_BLU)
 	love.graphics.setColor(CLR_DRT_BRN)
 	love.graphics.rectangle("fill", 0, screen_height*.6, screen_width, screen_height*.4)

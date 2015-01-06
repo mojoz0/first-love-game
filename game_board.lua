@@ -57,6 +57,18 @@ function init_game_board()
     game_board.tile_arr[i].color = CLR_BLK
     game_board.tile_arr[i].tile_type = TILE_SOLID
   end 
+  
+  -- Make other tiles solid black for testing
+  local tile = game_board:GetTileRC(11, 15)
+  tile.color = CLR_BLK
+  tile.tile_type = TILE_SOLID
+  local tile = game_board:GetTileRC(11, 19)
+  tile.color = CLR_BLK
+  tile.tile_type = TILE_SOLID
+  local tile = game_board:GetTileRC(11, 6)
+  tile.color = CLR_BLK
+  tile.tile_type = TILE_SOLID
+
 
   return game_board
 
@@ -79,10 +91,26 @@ function Gameboard:Draw(canvas)
 end
 
 function Gameboard:GetTileRC(row, col)
-  local idx = row*self.num_tiles_wide + col
+  assert(row < self.num_tiles_high)
+  assert(col < self.num_tiles_wide)
+  local idx = row*self.num_tiles_wide + col + 1
   --dbgprint("GTRC: idx, row, col =", idx, row, col)
-  assert(idx < self.num_total_tiles)
   return self.tile_arr[idx]
+end
+
+function Gameboard:GetBoundLine(tdir)
+
+  -- TODO: there might be a off-by-one BUG here
+  if (tdir == DIR_UP or tdir == DIR_LEFT) then
+    return -1 
+  elseif (tdir == DIR_RIGHT) then
+    return self.num_tiles_wide
+  elseif (tdir == DIR_DOWN) then
+    return self.num_tiles_high
+  else
+    FATAL("Invalid tdir specified")
+  end
+ 
 end
 
 

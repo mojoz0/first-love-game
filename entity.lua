@@ -14,7 +14,7 @@ Y_DIR = 20
 DIR_RIGHT = 1
 DIR_LEFT = -1
 DIR_DOWN = 2
-DIR_LEFT = -2
+DIR_UP = -2
 
 -- Entity will be a base class for things that are not static on screen
 -- TODO: Only let Entity.new take x_pos, y_pos and size 
@@ -47,15 +47,17 @@ function Entity:DistClosestStaticObj(gameboard, dir, entity)
 
   -- Coordinate of forward facing edge
   local forward_facing_edge, travel_dir = entity:ForwardFacingEdge(dir)
+  dbgprint(string.format("DCSO: travel_dir=%d, ffe=%d", travel_dir,
+                         forward_facing_edge))
   local edge_line = CoordToTileLine(forward_facing_edge)
 
   -- Tile paths that entity intersects with
   local low_bound, high_bound = entity:IntersectedTilePaths(dir)
 
-  local coord_closest_obj = ClosestObjectOnPaths(
-                                dir, edge_line,
+  local coord_closest_obj = ClosestSolidTileOnPaths(
+                                travel_dir, edge_line,
                                 low_bound, high_bound, gameboard)
-  local pos_closest_obj =  coord_closest_obj*TILE_SIZE
+  local pos_closest_obj =  ClosestPhysEdge(coord_closest_obj, travel_dir)
 
 
   return math.abs(forward_facing_edge - pos_closest_obj)
@@ -66,18 +68,21 @@ end
 
 
 function Entity:ForwardFacingEdge(dir)
+  dbgprint("FFE: dir=", dir)
   if (dir == X_DIR) then
-    if (self.x_vel > 0) then 
-      return self.x_pos + self.x_len/2, DIR_EAST
+    if (self.x_vel >= 0) then 
+      return self.x_pos + self.x_len/2, DIR_RIGHT
     else 
-      return self.x_pos - self.x_len/2, DIR_WEST
+      return self.x_pos - self.x_len/2, DIR_LEFT
     end
-  else -- if (dir == Y_DIR)
-    if (self.y_vel > 0) then 
-      return self.y_pos + self.y_len/2, DIR_SOUTH
+  elseif (dir == Y_DIR) then
+    if (self.y_vel >= 0) then 
+      return self.y_pos + self.y_len/2, DIR_DOWN
     else 
-      return self.y_pos - self.y_len/2, DIR_NORTH
+      return self.y_pos - self.y_len/2, DIR_UP
     end
+  else
+    FATAL("dir not valid") 
   end
 end
 
@@ -86,10 +91,10 @@ function Entity:IntersectedTilePaths(dir)
   local low_bound, high_bound
   if (dir == X_DIR) then
     low_bound = CoordToTileLine(self.y_pos - self.y_len/2)
-    high_bound = CoordToTileLine(self.y_pos + self.y_len/2)
+    high_bound = CoordToTileLine(self.y_pos + self.y_len/2 - 1)
   else 
     low_bound = CoordToTileLine(self.x_pos - self.x_len/2)
-    high_bound = CoordToTileLine(self.x_pos + self.x_len/2)
+    high_bound = CoordToTileLine(self.x_pos + self.x_len/2 - 1)
   end 
 
   return low_bound, high_bound
@@ -98,9 +103,11 @@ end
 function Entity:GetNewPos(pos, vel, dist_obj, time_delta)
   -- Natural distance to move if no objects in the way
   local dist_nat = self:DistNatural(pos, vel, time_delta)
+  dbgprint("GNP: dist_nat=", dist_nat)
 
   -- Final position change.  
   local pos_delta = math.min(dist_obj, dist_nat) 
+  dbgprint("GNP: pos_delta=", pos_delta)
 
   -- TODO: Insert logic to detect collisions here?
 
@@ -114,7 +121,7 @@ function Entity:UpdatePos(time_delta)
   local dist_obj_y = self:DistClosestStaticObj(game_board, Y_DIR, self)
   dbgprint("dist_obj_x=", dist_obj_x)
   dbgprint("dist_obj_y=", dist_obj_y)
-
+  
 
 
   -- TESTING BEGIN
@@ -155,18 +162,38 @@ end
 
 
 function Entity:Update(time_delta)
+
+  dbgprint(string.format("=== Time Step %d ===", time_step))
+  time_step = time_step + 1
   self:UpdatePos(time_delta)
 
+
+  -- TODO: Package this into Entity:UpdateVel()
+  -- (or Entity:Acc()?)
   self.x_vel = self.x_vel + self.x_acc*time_delta
   self.y_vel = self.y_vel + self.y_acc*time_delta
 end
 
 function Entity:Draw()
-  love.graphics.setColor(CLR_PRL)
+  love.graphics.setColor(CLR_YLW)
   -- FIXME: This causes trouble for odd-numbered sizes. problem?
-  love.graphics.rectangle(
+  love.graphics.circle("fill", self.x_pos, self.y_pos, self.x_len/2)
+  love.graphics.setColor(CLR_BLK)
+  love.graphics.circle(
+      "fill", self.x_pos - self.x_len/4, self.y_pos - self.y_len/6, 
+      self.x_len/12)
+  love.graphics.circle(
+      "fill", self.x_pos + self.x_len/4, self.y_pos - self.y_len/6, 
+      self.x_len/12)
+  love.graphics.arc("fill", self.x_pos, self.y_pos, self.x_len/4,
+                     0, math.pi)
+
+
+
+--[[  love.graphics.rectangle(
       "fill", self.x_pos - self.x_len/2, self.y_pos - self.y_len/2,
       self.x_len, self.y_len)
+]]
 end
 
 
