@@ -91,6 +91,7 @@ function Gameboard:Draw(canvas)
 end
 
 function Gameboard:GetTileRC(row, col)
+  dbgprint("GTRC: row=%d, col=%d", row, col)
   assert(row < self.num_tiles_high)
   assert(col < self.num_tiles_wide)
   local idx = row*self.num_tiles_wide + col + 1

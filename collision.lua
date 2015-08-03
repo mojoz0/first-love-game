@@ -52,8 +52,9 @@ function ClosestSolidTileOnPaths(travel_dir, edge_line,
 end
 
 function ClosestPhysEdge(coord, tdir)
+  dbgprint("CPE: coord,tdir=%d,%d", coord, tdir)   
   if (tdir == DIR_UP or tdir == DIR_LEFT) then
-    return coord*(TILE_SIZE + 1)
+    return (coord + 1)*TILE_SIZE - 1
   elseif (tdir == DIR_DOWN or tdir == DIR_RIGHT) then
     return coord*TILE_SIZE
   else
@@ -69,12 +70,12 @@ function IntersectSolidTile(intersect_line, low, high, gameboard, tdir)
   -- TODO: implement scanning in all directions
   for i=low, high do
     dbgprint(string.format("IST: tdir=%d", tdir))
-    dbgprint("IST: low, high, int_line=", low, high, intersect_line)
+    dbgprint("IST: low, high, int_line= %d, %d, %d", low, high, intersect_line)
     -- TODO: for efficiency: only check if statement once somehow?
     local row, col
-    if (tdir == DIR_UP or tdir == DIR_DOWN) then
+    if (DirVert(tdir)) then
       row, col = intersect_line, i 
-    elseif (tdir == DIR_RIGHT or tdir == DIR_LEFT) then
+    elseif (DirHoriz(tdir)) then
       row, col = i, intersect_line
     else
       -- FATAL error
@@ -104,4 +105,22 @@ function NextTileLine(line, tdir)
     assert(false)
   end
 end 
+
+-- Util Functions for determining characteristics of directions
+function DirPos(tdir)
+  return (tdir == DIR_DOWN or tdir == DIR_RIGHT)
+end
+
+function DirNeg(tdir)
+  return (tdir == DIR_UP or tdir == DIR_LEFT)
+end
+
+function DirHoriz(tdir)
+  return (tdir == DIR_LEFT or tdir == DIR_RIGHT)
+end
+
+function DirVert(tdir)
+  return (tdir == DIR_UP or tdir == DIR_DOWN)
+end
+
 

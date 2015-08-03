@@ -4,18 +4,18 @@
   @author Francisco Rojo (mojoz0101@gmail.com)
 --]]
 
-dbg = 0
+dbg = true
 time_step = 0
 
 -- Turn on to show tile lines
-DBG_SHOW_TILE_LINES = false
+DBG_SHOW_TILE_LINES = dbg
 
 function dbgprint (...)
-  if dbg then print(...) end
+  if dbg then print(string.format(...)) end
 end
 
-function FATAL(s)
-  print(s)
+function FATAL(...)
+  print(string.format(...))
   assert(false)
 end
 
